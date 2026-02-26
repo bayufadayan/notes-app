@@ -878,7 +878,8 @@ main.start-view {
         transform: translateX(0);
     }
 
-    archive-view .start-notes-list, .start-notes-list {
+    archive-view .start-notes-list,
+    .start-notes-list {
         grid-template-columns: 1fr 1fr;
         gap: 0.4rem;
         padding: 0;
@@ -886,11 +887,16 @@ main.start-view {
 }
 
 @media (max-width: 480px) {
-    archive-view, start-view {
-        padding: 1rem;
+
+    archive-view,
+    notes-view,
+    form-view,
+    start-view {
+        padding-inline: 1rem;
     }
 
-    archive-view .start-notes-list, .start-notes-list {
+    archive-view .start-notes-list,
+    .start-notes-list {
         grid-template-columns: 1fr;
     }
 
@@ -902,7 +908,7 @@ main.start-view {
         margin-top: 1rem;
         font-size: 1.5rem;
         justify-content: center;
-        
+
     }
 
     .archive-title {
