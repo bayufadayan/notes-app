@@ -6,7 +6,6 @@ window.appSwitchView = function(viewName, noteId = null) {
     const formView = document.querySelector('form-view');
     const archiveView = document.querySelector('archive-view');
 
-    // Close sidebar on mobile after navigation
     if (window.innerWidth <= 768) {
         window.closeSidebar();
     }
@@ -76,7 +75,6 @@ window.toggleSidebar = function() {
     sidebar.classList.toggle('open');
     backdrop.classList.toggle('show');
     
-    // Prevent body scroll when sidebar is open on mobile
     if (sidebar.classList.contains('open')) {
         body.style.overflow = 'hidden';
     } else {
