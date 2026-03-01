@@ -1,4 +1,6 @@
-import './app.js';
+import './app-core.js';
+
+import './style/style.css';
 
 import './components/header.js';
 import './components/sidebar.js';
