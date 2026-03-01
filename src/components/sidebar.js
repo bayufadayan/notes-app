@@ -1,5 +1,6 @@
 import { createIcons, icons } from 'lucide';
-import { getAllNotes } from '../utils/notes-manager.js';
+import { NProgress } from 'nprogress-v2';
+import { getUnarchivedNotes } from '../utils/notes-manager.js';
 import './note-item.js';
 
 class Sidebar extends HTMLElement {
@@ -13,7 +14,16 @@ class Sidebar extends HTMLElement {
     attachEventListeners() {
         const homeBtn = this.querySelector('[data-nav="home"]');
         if (homeBtn) {
-            homeBtn.addEventListener('click', () => window.appSwitchView('home'));
+            homeBtn.addEventListener('click', () => {
+                const allNotes = document.querySelectorAll('.notes-item');
+                allNotes.forEach(note => note.classList.remove('active'));
+                
+                const allNavBtns = document.querySelectorAll('.btn-list-notes');
+                allNavBtns.forEach(btn => btn.classList.remove('active'));
+                homeBtn.classList.add('active');
+
+                window.appSwitchView('home');
+            });
         }
 
         const addBtn = this.querySelector('.btn-add-notes');
@@ -26,21 +36,20 @@ class Sidebar extends HTMLElement {
 
         const archiveBtn = this.querySelector('[data-nav="archive"]');
         if (archiveBtn) {
-            archiveBtn.addEventListener('click', () => window.appSwitchView('archive'));
+            archiveBtn.addEventListener('click', () => {
+                const allNotes = document.querySelectorAll('.notes-item');
+                allNotes.forEach(note => note.classList.remove('active'));
+                
+                const allNavBtns = document.querySelectorAll('.btn-list-notes');
+                allNavBtns.forEach(btn => btn.classList.remove('active'));
+                archiveBtn.classList.add('active');
+                
+                window.appSwitchView('archive');
+            });
         }
     }
 
     async render() {
-        this.innerHTML = '<p class="loading-text">Loading notes...</p>';
-        
-        const notesData = await getAllNotes();
-        const notesList = notesData.map(note => `
-                <note-item 
-                    data-id="${note.id}" 
-                    data-title="${note.title}">
-                </note-item>
-            `).join('');
-
         this.innerHTML = `
             <button class="btn-add-notes">
                 <i data-lucide="plus"></i>
@@ -56,12 +65,31 @@ class Sidebar extends HTMLElement {
             </button>
             <h3 class="sidebar-title">Notes List</h3>
             <ul class="notes-list custom-scrollbar">
-                ${notesList}
+                <loading-progress></loading-progress>
             </ul>
         `;
-        
-        this.attachEventListeners();
+
         createIcons({ icons });
+        this.attachEventListeners();
+
+        NProgress.start();
+
+        try {
+            const notesData = await getUnarchivedNotes();
+            const notesList = notesData.map(note => `
+                    <note-item 
+                        data-id="${note.id}" 
+                        data-title="${note.title}">
+                    </note-item>
+                `).join('');
+
+            const listContainer = this.querySelector('.notes-list');
+            if (listContainer) {
+                listContainer.innerHTML = notesData.length > 0 ? notesList : '<empty-list type="notes"></empty-list>';
+            }
+        } finally {
+            NProgress.done();
+        }
     }
 }
 

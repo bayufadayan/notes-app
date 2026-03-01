@@ -1,4 +1,5 @@
 import { createIcons, icons } from 'lucide';
+import { NProgress } from 'nprogress-v2';
 import { addNote } from '../../utils/notes-manager.js';
 
 class FormView extends HTMLElement {
@@ -85,21 +86,23 @@ class FormView extends HTMLElement {
             return;
         }
 
+        NProgress.start();
+
         try {
             const newNote = await addNote(title, content);
             
             if (newNote) {
-                alert('Note successfully saved!');
-                
                 this.querySelector('#note-title').value = '';
                 this.querySelector('#note-content').value = '';
                 this.querySelector('.content-word-count').textContent = '0/50';
                 
-                window.appSwitchView('home');
+                window.appSwitchView('note', newNote.id);
             }
         } catch (error) {
             alert('Failed to save note. Please try again.');
             console.error('Save error:', error);
+        } finally {
+            NProgress.done();
         }
     }
 }

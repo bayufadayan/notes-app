@@ -1,5 +1,7 @@
 import { createIcons, icons } from 'lucide';
-import { getAllNotes } from '../../utils/notes-manager.js';
+import { NProgress } from 'nprogress-v2';
+import { getUnarchivedNotes } from '../../utils/notes-manager.js';
+import '../loading.js';
 import '../note-item-card.js';
 
 class StartView extends HTMLElement {
@@ -18,23 +20,24 @@ class StartView extends HTMLElement {
 
         const archiveBtn = this.querySelector('.btn-start-look-archive');
         if (archiveBtn) {
-            archiveBtn.addEventListener('click', () => window.appSwitchView('archive'));
+            archiveBtn.addEventListener('click', () => {
+                const allNotes = document.querySelectorAll('.notes-item');
+                allNotes.forEach(note => note.classList.remove('active'));
+                
+                const allNavBtns = document.querySelectorAll('.btn-list-notes');
+                allNavBtns.forEach(btn => btn.classList.remove('active'));
+                
+                const sidebarArchiveBtn = document.querySelector('[data-nav="archive"]');
+                if (sidebarArchiveBtn) {
+                    sidebarArchiveBtn.classList.add('active');
+                }
+                
+                window.appSwitchView('archive');
+            });
         }
     }
 
     async render() {
-        // Show loading state
-        this.innerHTML = '<p class="loading-text">Loading notes...</p>';
-        
-        const notesData = await getAllNotes();
-        const notesListCard = notesData.map(note => `
-                <note-item-card 
-                    data-id="${note.id}" 
-                    data-title="${note.title}"
-                    data-body="${note.body}">
-                </note-item-card>
-            `).join('');
-
         this.innerHTML = `
             <figure class="start-icon">
                 <i data-lucide="notebook-pen"></i>
@@ -49,12 +52,39 @@ class StartView extends HTMLElement {
                 Archive
             </button>
             <ul class="start-notes-list">
-                ${notesListCard}
+                <loading-progress></loading-progress>
             </ul>
         `;
-        
+
         this.attachEventListeners();
-        setTimeout(() => createIcons({ icons }), 0);
+        createIcons({ icons });
+        NProgress.start();
+
+        try {
+            const notesData = await getUnarchivedNotes();
+
+            let notesListCard;
+            if (notesData.length > 0) {
+                notesListCard = notesData.map(note => `
+                    <note-item-card 
+                        data-id="${note.id}" 
+                        data-title="${note.title}"
+                        data-body="${note.body}">
+                    </note-item-card>
+                `).join('');
+            } else {
+                notesListCard = `
+                <empty-list type="notes" isIconAppear="false"></empty-list>
+                `;
+            }
+
+            const listContainer = this.querySelector('.start-notes-list');
+            if (listContainer) {
+                listContainer.innerHTML = notesListCard;
+            }
+        } finally {
+            NProgress.done();
+        }
     }
 }
 

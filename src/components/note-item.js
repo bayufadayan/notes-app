@@ -7,6 +7,13 @@ class NoteItem extends HTMLElement {
         this.textContent = title;
 
         this.addEventListener('click', () => {
+            const allNotes = document.querySelectorAll('.notes-item');
+            allNotes.forEach(note => note.classList.remove('active'));
+            
+            const allNavBtns = document.querySelectorAll('.btn-list-notes');
+            allNavBtns.forEach(btn => btn.classList.remove('active'));
+            
+            this.classList.add('active');
             window.appSwitchView('note', id);
         });
     }

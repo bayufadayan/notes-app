@@ -1,6 +1,6 @@
 const BASE_URL = process.env.BASE_URL;
 
-export async function getAllNotes() {
+export async function getUnarchivedNotes() {
     try {
         const response = await fetch(`${BASE_URL}/notes`, {
             method: 'GET',
