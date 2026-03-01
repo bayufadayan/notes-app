@@ -22,11 +22,12 @@ class StartView extends HTMLElement {
         }
     }
 
-    render() {
-        const notesData = getAllNotes();
-        const notesListCard = notesData
-            .filter(note => !note.archived)
-            .map(note => `
+    async render() {
+        // Show loading state
+        this.innerHTML = '<p class="loading-text">Loading notes...</p>';
+        
+        const notesData = await getAllNotes();
+        const notesListCard = notesData.map(note => `
                 <note-item-card 
                     data-id="${note.id}" 
                     data-title="${note.title}"

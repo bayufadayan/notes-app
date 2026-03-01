@@ -20,8 +20,11 @@ class NotesView extends HTMLElement {
         }
     }
 
-    render(noteId) {
-        const note = getNoteById(noteId);
+    async render(noteId) {
+        // Show loading state
+        this.innerHTML = '<p class="loading-text">Loading note...</p>';
+        
+        const note = await getNoteById(noteId);
         
         if (!note) {
             this.innerHTML = '<p>Note not found</p>';
@@ -75,22 +78,28 @@ class NotesView extends HTMLElement {
         const deleteButtons = this.querySelectorAll('[data-action="delete"]');
 
         archiveButtons.forEach(btn => {
-            btn.addEventListener('click', () => {
+            btn.addEventListener('click', async () => {
                 const noteId = this.getAttribute('note-id');
                 const action = btn.getAttribute('data-action');
 
                 if (action === 'archive') {
                     if (confirm('Archive this note?')) {
-                        if (archiveNote(noteId)) {
+                        const success = await archiveNote(noteId);
+                        if (success) {
                             alert('Note archived successfully!');
                             window.appSwitchView('home');
+                        } else {
+                            alert('Failed to archive note.');
                         }
                     }
                 } else if (action === 'unarchive') {
                     if (confirm('Unarchive this note?')) {
-                        if (unarchiveNote(noteId)) {
+                        const success = await unarchiveNote(noteId);
+                        if (success) {
                             alert('Note unarchived successfully!');
                             window.appSwitchView('home');
+                        } else {
+                            alert('Failed to unarchive note.');
                         }
                     }
                 }
@@ -98,12 +107,15 @@ class NotesView extends HTMLElement {
         });
 
         deleteButtons.forEach(btn => {
-            btn.addEventListener('click', () => {
+            btn.addEventListener('click', async () => {
                 const noteId = this.getAttribute('note-id');
                 if (confirm('Are you sure you want to delete this note? This action cannot be undone.')) {
-                    if (deleteNote(noteId)) {
+                    const success = await deleteNote(noteId);
+                    if (success) {
                         alert('Note deleted successfully!');
                         window.appSwitchView('home');
+                    } else {
+                        alert('Failed to delete note.');
                     }
                 }
             });

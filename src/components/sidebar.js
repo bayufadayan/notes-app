@@ -30,11 +30,11 @@ class Sidebar extends HTMLElement {
         }
     }
 
-    render() {
-        const notesData = getAllNotes();
-        const notesList = notesData
-            .filter(note => !note.archived)
-            .map(note => `
+    async render() {
+        this.innerHTML = '<p class="loading-text">Loading notes...</p>';
+        
+        const notesData = await getAllNotes();
+        const notesList = notesData.map(note => `
                 <note-item 
                     data-id="${note.id}" 
                     data-title="${note.title}">

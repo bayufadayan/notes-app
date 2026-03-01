@@ -74,7 +74,7 @@ class FormView extends HTMLElement {
         });
     }
 
-    handleSubmit(title, content) {
+    async handleSubmit(title, content) {
         if (title.length > 50) {
             alert('Title max 50 characters!');
             return;
@@ -85,18 +85,21 @@ class FormView extends HTMLElement {
             return;
         }
 
-        const newNote = addNote(title, content);
-        
-        if (newNote) {
-            alert('Note successfully saved!');
+        try {
+            const newNote = await addNote(title, content);
             
-            this.querySelector('#note-title').value = '';
-            this.querySelector('#note-content').value = '';
-            this.querySelector('.content-word-count').textContent = '0/50';
-            
-            window.appSwitchView('home');
-        } else {
+            if (newNote) {
+                alert('Note successfully saved!');
+                
+                this.querySelector('#note-title').value = '';
+                this.querySelector('#note-content').value = '';
+                this.querySelector('.content-word-count').textContent = '0/50';
+                
+                window.appSwitchView('home');
+            }
+        } catch (error) {
             alert('Failed to save note. Please try again.');
+            console.error('Save error:', error);
         }
     }
 }

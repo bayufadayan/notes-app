@@ -1,5 +1,5 @@
 import { createIcons, icons } from 'lucide';
-import { getAllNotes } from '../../utils/notes-manager.js';
+import { getArchivedNotes } from '../../utils/notes-manager.js';
 import '../note-item-card.js';
 
 class ArchiveView extends HTMLElement {
@@ -11,9 +11,10 @@ class ArchiveView extends HTMLElement {
         });
     }
 
-    render() {
-        const notesData = getAllNotes();
-        const archivedNotes = notesData.filter(note => note.archived);
+    async render() {
+        this.innerHTML = '<p class="loading-text">Loading archived notes...</p>';
+        
+        const archivedNotes = await getArchivedNotes();
         
         let notesListCard;
         if (archivedNotes.length > 0) {

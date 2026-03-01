@@ -3,11 +3,15 @@ import { archiveNote, unarchiveNote, deleteNote, getNoteById } from '../utils/no
 
 class NoteItemCard extends HTMLElement {
     connectedCallback() {
+        this.render();
+    }
+
+    async render() {
         const id = this.getAttribute('data-id') || '';
         const title = this.getAttribute('data-title');
         const body = this.getAttribute('data-body');
         
-        const note = getNoteById(id);
+        const note = await getNoteById(id);
         const archiveText = note?.archived ? 'Unarchive' : 'Archive';
         const archiveIcon = note?.archived ? 'archive-restore' : 'archive';
 
@@ -38,7 +42,7 @@ class NoteItemCard extends HTMLElement {
 
         this.attachDropdownListeners(id);
 
-        setTimeout(() => createIcons(), 0);
+        setTimeout(() => createIcons({ icons }), 0);
     }
 
     attachDropdownListeners(noteId) {
@@ -64,22 +68,28 @@ class NoteItemCard extends HTMLElement {
         const archiveBtn = dropdown.querySelector('[data-action="archive"]');
         const deleteBtn = dropdown.querySelector('[data-action="delete"]');
 
-        archiveBtn?.addEventListener('click', (e) => {
+        archiveBtn?.addEventListener('click', async (e) => {
             e.stopPropagation();
             
-            const note = getNoteById(noteId);
+            const note = await getNoteById(noteId);
             if (!note) return;
 
             if (note.archived) {
                 if (confirm('Unarchive this note?')) {
-                    if (unarchiveNote(noteId)) {
+                    const success = await unarchiveNote(noteId);
+                    if (success) {
                         alert('Note unarchived successfully!');
+                    } else {
+                        alert('Failed to unarchive note.');
                     }
                 }
             } else {
                 if (confirm('Archive this note?')) {
-                    if (archiveNote(noteId)) {
+                    const success = await archiveNote(noteId);
+                    if (success) {
                         alert('Note archived successfully!');
+                    } else {
+                        alert('Failed to archive note.');
                     }
                 }
             }
@@ -87,12 +97,15 @@ class NoteItemCard extends HTMLElement {
             dropdown.style.display = 'none';
         });
 
-        deleteBtn?.addEventListener('click', (e) => {
+        deleteBtn?.addEventListener('click', async (e) => {
             e.stopPropagation();
             
             if (confirm('Are you sure you want to delete this note? This action cannot be undone.')) {
-                if (deleteNote(noteId)) {
+                const success = await deleteNote(noteId);
+                if (success) {
                     alert('Note deleted successfully!');
+                } else {
+                    alert('Failed to delete note.');
                 }
             }
             

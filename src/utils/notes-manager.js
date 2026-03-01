@@ -1,90 +1,174 @@
-import { notesData } from '../data/notes.js';
+const BASE_URL = process.env.BASE_URL;
 
-const STORAGE_KEY = 'notes_app_data';
-
-function initializeNotes() {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-        try {
-            return JSON.parse(stored);
-        } catch (e) {
-            console.error('Failed to parse notes from localStorage:', e);
-            return [...notesData];
+export async function getAllNotes() {
+    try {
+        const response = await fetch(`${BASE_URL}/notes`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        
+        const result = await response.json();
+        
+        if (!response.ok) {
+            throw new Error(result.message || 'Failed to fetch notes');
         }
+        
+        return result.data || [];
+    } catch (error) {
+        console.error('Error fetching notes:', error);
+        return [];
     }
-    return [...notesData];
 }
 
-function saveNotes(notes) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(notes));
+export async function getArchivedNotes() {
+    try {
+        const response = await fetch(`${BASE_URL}/notes/archived`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        
+        const result = await response.json();
+        
+        if (!response.ok) {
+            throw new Error(result.message || 'Failed to fetch archived notes');
+        }
+        
+        return result.data || [];
+    } catch (error) {
+        console.error('Error fetching archived notes:', error);
+        return [];
+    }
 }
 
-export function getAllNotes() {
-    return initializeNotes();
+export async function getNoteById(id) {
+    try {
+        const response = await fetch(`${BASE_URL}/notes/${id}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        
+        const result = await response.json();
+        
+        if (!response.ok) {
+            throw new Error(result.message || 'Failed to fetch note');
+        }
+        
+        return result.data || null;
+    } catch (error) {
+        console.error('Error fetching note by ID:', error);
+        return null;
+    }
 }
 
-export function getNoteById(id) {
-    const notes = getAllNotes();
-    return notes.find(note => note.id === id);
+export async function addNote(title, body) {
+    try {
+        const trimmedTitle = title.trim();
+        const trimmedBody = body.trim();
+        
+        if (!trimmedTitle || !trimmedBody) {
+            throw new Error('Title and body are required');
+        }
+        
+        const response = await fetch(`${BASE_URL}/notes`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ 
+                title: trimmedTitle, 
+                body: trimmedBody 
+            }),
+        });
+        
+        const result = await response.json();
+        
+        if (!response.ok) {
+            throw new Error(result.message || 'Failed to create note');
+        }
+        
+        window.dispatchEvent(new CustomEvent('notes-updated'));
+        
+        return result.data;
+    } catch (error) {
+        console.error('Error adding note:', error);
+        throw error;
+    }
 }
 
-export function addNote(title, body) {
-    const notes = getAllNotes();
-    const newNote = {
-        id: `notes-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-        title: title.trim(),
-        body: body.trim(),
-        createdAt: new Date().toISOString(),
-        archived: false,
-    };
-    
-    notes.unshift(newNote);
-    saveNotes(notes);
-    window.dispatchEvent(new CustomEvent('notes-updated'));
-    
-    return newNote;
-}
-
-export function deleteNote(id) {
-    const notes = getAllNotes();
-    const filteredNotes = notes.filter(note => note.id !== id);
-    
-    if (filteredNotes.length === notes.length) {
+export async function deleteNote(id) {
+    try {
+        const response = await fetch(`${BASE_URL}/notes/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        
+        const result = await response.json();
+        
+        if (!response.ok) {
+            throw new Error(result.message || 'Failed to delete note');
+        }
+        
+        window.dispatchEvent(new CustomEvent('notes-updated'));
+        
+        return result.status === 'success';
+    } catch (error) {
+        console.error('Error deleting note:', error);
         return false;
     }
-    
-    saveNotes(filteredNotes);
-    window.dispatchEvent(new CustomEvent('notes-updated'));
-    
-    return true;
 }
 
-export function archiveNote(id) {
-    const notes = getAllNotes();
-    const note = notes.find(note => note.id === id);
-    
-    if (!note) {
+export async function archiveNote(id) {
+    try {
+        const response = await fetch(`${BASE_URL}/notes/${id}/archive`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        
+        const result = await response.json();
+        
+        if (!response.ok) {
+            throw new Error(result.message || 'Failed to archive note');
+        }
+        
+        window.dispatchEvent(new CustomEvent('notes-updated'));
+        
+        return result.status === 'success';
+    } catch (error) {
+        console.error('Error archiving note:', error);
         return false;
     }
-    
-    note.archived = true;
-    saveNotes(notes);
-    window.dispatchEvent(new CustomEvent('notes-updated'));
-    
-    return true;
 }
 
-export function unarchiveNote(id) {
-    const notes = getAllNotes();
-    const note = notes.find(note => note.id === id);
-    
-    if (!note) {
+export async function unarchiveNote(id) {
+    try {
+        const response = await fetch(`${BASE_URL}/notes/${id}/unarchive`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        
+        const result = await response.json();
+        
+        if (!response.ok) {
+            throw new Error(result.message || 'Failed to unarchive note');
+        }
+        
+        window.dispatchEvent(new CustomEvent('notes-updated'));
+        
+        return result.status === 'success';
+    } catch (error) {
+        console.error('Error unarchiving note:', error);
         return false;
     }
-    
-    note.archived = false;
-    saveNotes(notes);
-    window.dispatchEvent(new CustomEvent('notes-updated'));
-    
-    return true;
 }
