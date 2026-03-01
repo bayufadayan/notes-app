@@ -13,4 +13,4 @@
  ---
 
  [This Repository](https://github.com/bayufadayan/notes-app)
- [https://bayufadayan.github.io/notes-app/](https://bayufadayan.github.io/notes-app/)
+ [https://notes-app-omega-jade-65.vercel.app/](https://notes-app-omega-jade-65.vercel.app/)

@@ -1,8 +1,8 @@
-import { createIcons, icons } from 'lucide';
+import { createIcons, icons } from "lucide";
 
 class Header extends HTMLElement {
-    connectedCallback() {
-        this.innerHTML = `
+  connectedCallback() {
+    this.innerHTML = `
             <button class="hamburger-menu" onclick="window.toggleSidebar()">
                 <i data-lucide="menu"></i>
             </button>
@@ -10,9 +10,8 @@ class Header extends HTMLElement {
             <h1 class="header-title">My Notes</h1>
         `;
 
-        createIcons({ icons });
-    }
-    
+    createIcons({ icons });
+  }
 }
 
-customElements.define('app-header', Header);
+customElements.define("app-header", Header);

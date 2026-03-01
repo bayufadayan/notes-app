@@ -1,15 +1,15 @@
-import { createIcons, icons } from 'lucide';
+import { createIcons, icons } from "lucide";
 
 class Footer extends HTMLElement {
-    connectedCallback() {
-        this.innerHTML = `
+  connectedCallback() {
+    this.innerHTML = `
             <p>&copy; 2026 Notes App</p>
             <i data-lucide="github"></i>
             <a href="https://github.com/bayufadayan" target="_blank">Check My Github</a>
         `;
 
-        createIcons({ icons });
-    }
+    createIcons({ icons });
+  }
 }
 
-customElements.define('app-footer', Footer);
+customElements.define("app-footer", Footer);

@@ -1,56 +1,56 @@
-import { createIcons, icons } from 'lucide';
-import { NProgress } from 'nprogress-v2';
-import { getUnarchivedNotes } from '../utils/notes-manager.js';
-import './note-item.js';
+import { createIcons, icons } from "lucide";
+import { NProgress } from "nprogress-v2";
+import { getUnarchivedNotes } from "../utils/notes-manager.js";
+import "./note-item.js";
 
 class Sidebar extends HTMLElement {
-    connectedCallback() {
-        this.render();
-        window.addEventListener('notes-updated', () => {
-            this.render();
-        });
+  connectedCallback() {
+    this.render();
+    window.addEventListener("notes-updated", () => {
+      this.render();
+    });
+  }
+
+  attachEventListeners() {
+    const homeBtn = this.querySelector('[data-nav="home"]');
+    if (homeBtn) {
+      homeBtn.addEventListener("click", () => {
+        const allNotes = document.querySelectorAll(".notes-item");
+        allNotes.forEach((note) => note.classList.remove("active"));
+
+        const allNavBtns = document.querySelectorAll(".btn-list-notes");
+        allNavBtns.forEach((btn) => btn.classList.remove("active"));
+        homeBtn.classList.add("active");
+
+        window.appSwitchView("home");
+      });
     }
 
-    attachEventListeners() {
-        const homeBtn = this.querySelector('[data-nav="home"]');
-        if (homeBtn) {
-            homeBtn.addEventListener('click', () => {
-                const allNotes = document.querySelectorAll('.notes-item');
-                allNotes.forEach(note => note.classList.remove('active'));
-                
-                const allNavBtns = document.querySelectorAll('.btn-list-notes');
-                allNavBtns.forEach(btn => btn.classList.remove('active'));
-                homeBtn.classList.add('active');
-
-                window.appSwitchView('home');
-            });
-        }
-
-        const addBtn = this.querySelector('.btn-add-notes');
-        if (addBtn) {
-            addBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                window.appSwitchView('form');
-            });
-        }
-
-        const archiveBtn = this.querySelector('[data-nav="archive"]');
-        if (archiveBtn) {
-            archiveBtn.addEventListener('click', () => {
-                const allNotes = document.querySelectorAll('.notes-item');
-                allNotes.forEach(note => note.classList.remove('active'));
-                
-                const allNavBtns = document.querySelectorAll('.btn-list-notes');
-                allNavBtns.forEach(btn => btn.classList.remove('active'));
-                archiveBtn.classList.add('active');
-                
-                window.appSwitchView('archive');
-            });
-        }
+    const addBtn = this.querySelector(".btn-add-notes");
+    if (addBtn) {
+      addBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        window.appSwitchView("form");
+      });
     }
 
-    async render() {
-        this.innerHTML = `
+    const archiveBtn = this.querySelector('[data-nav="archive"]');
+    if (archiveBtn) {
+      archiveBtn.addEventListener("click", () => {
+        const allNotes = document.querySelectorAll(".notes-item");
+        allNotes.forEach((note) => note.classList.remove("active"));
+
+        const allNavBtns = document.querySelectorAll(".btn-list-notes");
+        allNavBtns.forEach((btn) => btn.classList.remove("active"));
+        archiveBtn.classList.add("active");
+
+        window.appSwitchView("archive");
+      });
+    }
+  }
+
+  async render() {
+    this.innerHTML = `
             <button class="btn-add-notes">
                 <i data-lucide="plus"></i>
                 Add Note
@@ -69,28 +69,35 @@ class Sidebar extends HTMLElement {
             </ul>
         `;
 
-        createIcons({ icons });
-        this.attachEventListeners();
+    createIcons({ icons });
+    this.attachEventListeners();
 
-        NProgress.start();
+    NProgress.start();
 
-        try {
-            const notesData = await getUnarchivedNotes();
-            const notesList = notesData.map(note => `
+    try {
+      const notesData = await getUnarchivedNotes();
+      const notesList = notesData
+        .map(
+          (note) => `
                     <note-item 
                         data-id="${note.id}" 
                         data-title="${note.title}">
                     </note-item>
-                `).join('');
+                `,
+        )
+        .join("");
 
-            const listContainer = this.querySelector('.notes-list');
-            if (listContainer) {
-                listContainer.innerHTML = notesData.length > 0 ? notesList : '<empty-list type="notes"></empty-list>';
-            }
-        } finally {
-            NProgress.done();
-        }
+      const listContainer = this.querySelector(".notes-list");
+      if (listContainer) {
+        listContainer.innerHTML =
+          notesData.length > 0
+            ? notesList
+            : '<empty-list type="notes"></empty-list>';
+      }
+    } finally {
+      NProgress.done();
     }
+  }
 }
 
-customElements.define('app-sidebar', Sidebar);
+customElements.define("app-sidebar", Sidebar);
