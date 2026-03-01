@@ -1,4 +1,4 @@
-import { createIcons } from 'lucide';
+import { createIcons, icons } from 'lucide';
 import { getAllNotes } from '../utils/notes-manager.js';
 import './note-item.js';
 
@@ -61,7 +61,7 @@ class Sidebar extends HTMLElement {
         `;
         
         this.attachEventListeners();
-        createIcons();
+        createIcons({ icons });
     }
 }
 

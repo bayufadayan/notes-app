@@ -1,4 +1,4 @@
-import { createIcons } from 'lucide';
+import { createIcons, icons } from 'lucide';
 
 window.appSwitchView = function(viewName, noteId = null) {
     const body = document.body;
@@ -66,7 +66,7 @@ window.appSwitchView = function(viewName, noteId = null) {
         localStorage.removeItem('currentNoteId');
     }
 
-    createIcons();
+    createIcons({ icons });
 };
 
 window.toggleSidebar = function() {

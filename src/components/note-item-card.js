@@ -1,4 +1,4 @@
-import { createIcons } from 'lucide';
+import { createIcons, icons } from 'lucide';
 import { archiveNote, unarchiveNote, deleteNote, getNoteById } from '../utils/notes-manager.js';
 
 class NoteItemCard extends HTMLElement {
@@ -52,7 +52,7 @@ class NoteItemCard extends HTMLElement {
             });
             
             dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
-            setTimeout(() => createIcons(), 0);
+            setTimeout(() => createIcons({ icons }), 0);
         });
 
         document.addEventListener('click', (e) => {

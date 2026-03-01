@@ -1,4 +1,4 @@
-import { createIcons } from 'lucide';
+import { createIcons, icons } from 'lucide';
 import { getAllNotes } from '../../utils/notes-manager.js';
 import '../note-item-card.js';
 
@@ -53,7 +53,7 @@ class StartView extends HTMLElement {
         `;
         
         this.attachEventListeners();
-        setTimeout(() => createIcons(), 0);
+        setTimeout(() => createIcons({ icons }), 0);
     }
 }
 

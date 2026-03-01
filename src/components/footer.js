@@ -1,4 +1,4 @@
-import { createIcons } from 'lucide';
+import { createIcons, icons } from 'lucide';
 
 class Footer extends HTMLElement {
     connectedCallback() {
@@ -8,7 +8,7 @@ class Footer extends HTMLElement {
             <a href="https://github.com/bayufadayan" target="_blank">Check My Github</a>
         `;
 
-        createIcons();
+        createIcons({ icons });
     }
 }
 

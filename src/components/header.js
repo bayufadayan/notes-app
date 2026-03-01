@@ -1,4 +1,4 @@
-import { createIcons } from 'lucide';
+import { createIcons, icons } from 'lucide';
 
 class Header extends HTMLElement {
     connectedCallback() {
@@ -10,7 +10,7 @@ class Header extends HTMLElement {
             <h1 class="header-title">My Notes</h1>
         `;
 
-        createIcons();
+        createIcons({ icons });
     }
     
 }
