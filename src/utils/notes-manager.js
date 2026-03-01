@@ -1,4 +1,4 @@
-const BASE_URL = process.env.BASE_URL;
+const BASE_URL = process.env.BASE_URL || 'https://notes-api.dicoding.dev/v2';
 
 export async function getUnarchivedNotes() {
   try {
