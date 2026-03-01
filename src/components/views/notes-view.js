@@ -1,3 +1,4 @@
+import { createIcons } from 'lucide';
 import { getNoteById, archiveNote, unarchiveNote, deleteNote } from '../../utils/notes-manager.js';
 
 class NotesView extends HTMLElement {
@@ -65,7 +66,7 @@ class NotesView extends HTMLElement {
             <p class="content-text">${note.body}</p>
         `;
 
-        setTimeout(() => lucide.createIcons(), 0);
+        setTimeout(() => createIcons(), 0);
         this.attachEventListeners();
     }
 

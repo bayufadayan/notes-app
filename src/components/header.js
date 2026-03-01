@@ -1,3 +1,5 @@
+import { createIcons } from 'lucide';
+
 class Header extends HTMLElement {
     connectedCallback() {
         this.innerHTML = `
@@ -8,7 +10,7 @@ class Header extends HTMLElement {
             <h1 class="header-title">My Notes</h1>
         `;
 
-        lucide.createIcons();
+        createIcons();
     }
     
 }

@@ -1,3 +1,4 @@
+import { createIcons } from 'lucide';
 import { archiveNote, unarchiveNote, deleteNote, getNoteById } from '../utils/notes-manager.js';
 
 class NoteItemCard extends HTMLElement {
@@ -37,7 +38,7 @@ class NoteItemCard extends HTMLElement {
 
         this.attachDropdownListeners(id);
 
-        setTimeout(() => lucide.createIcons(), 0);
+        setTimeout(() => createIcons(), 0);
     }
 
     attachDropdownListeners(noteId) {
@@ -51,7 +52,7 @@ class NoteItemCard extends HTMLElement {
             });
             
             dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
-            setTimeout(() => lucide.createIcons(), 0);
+            setTimeout(() => createIcons(), 0);
         });
 
         document.addEventListener('click', (e) => {

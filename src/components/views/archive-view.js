@@ -1,3 +1,4 @@
+import { createIcons } from 'lucide';
 import { getAllNotes } from '../../utils/notes-manager.js';
 import '../note-item-card.js';
 
@@ -37,7 +38,7 @@ class ArchiveView extends HTMLElement {
             </ul>
         `;
         
-        setTimeout(() => lucide.createIcons(), 0);
+        setTimeout(() => createIcons(), 0);
     }
 }
 

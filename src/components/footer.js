@@ -1,3 +1,5 @@
+import { createIcons } from 'lucide';
+
 class Footer extends HTMLElement {
     connectedCallback() {
         this.innerHTML = `
@@ -5,6 +7,8 @@ class Footer extends HTMLElement {
             <i data-lucide="github"></i>
             <a href="https://github.com/bayufadayan" target="_blank">Check My Github</a>
         `;
+
+        createIcons();
     }
 }
 

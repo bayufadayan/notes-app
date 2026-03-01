@@ -1,10 +1,11 @@
+import { createIcons } from 'lucide';
 import { addNote } from '../../utils/notes-manager.js';
 
 class FormView extends HTMLElement {
     connectedCallback() {
         this.render();
         this.attachEventListeners();
-        setTimeout(() => lucide.createIcons(), 0);
+        setTimeout(() => createIcons(), 0);
     }
 
     render() {
