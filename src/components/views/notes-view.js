@@ -1,4 +1,5 @@
 import { createIcons, icons } from 'lucide';
+import iziToast from 'izitoast';
 import { getNoteById, archiveNote, unarchiveNote, deleteNote } from '../../utils/notes-manager.js';
 
 class NotesView extends HTMLElement {
@@ -83,25 +84,75 @@ class NotesView extends HTMLElement {
                 const action = btn.getAttribute('data-action');
 
                 if (action === 'archive') {
-                    if (confirm('Archive this note?')) {
-                        const success = await archiveNote(noteId);
-                        if (success) {
-                            alert('Note archived successfully!');
-                            window.appSwitchView('home');
-                        } else {
-                            alert('Failed to archive note.');
-                        }
-                    }
+                    iziToast.question({
+                        timeout: false,
+                        close: false,
+                        overlay: true,
+                        displayMode: 'once',
+                        id: 'question',
+                        zindex: 999,
+                        title: 'Archive Note',
+                        message: 'Archive this note?',
+                        position: 'center',
+                        buttons: [
+                            ['<button><b>Yes</b></button>', async (instance, toast) => {
+                                instance.hide({ transitionOut: 'fadeOut' }, toast, 'button');
+                                const success = await archiveNote(noteId);
+                                if (success) {
+                                    iziToast.success({
+                                        title: 'Success',
+                                        message: 'Note archived successfully!',
+                                        position: 'topRight'
+                                    });
+                                    window.appSwitchView('home');
+                                } else {
+                                    iziToast.error({
+                                        title: 'Error',
+                                        message: 'Failed to archive note.',
+                                        position: 'topRight'
+                                    });
+                                }
+                            }, true],
+                            ['<button>No</button>', (instance, toast) => {
+                                instance.hide({ transitionOut: 'fadeOut' }, toast, 'button');
+                            }]
+                        ]
+                    });
                 } else if (action === 'unarchive') {
-                    if (confirm('Unarchive this note?')) {
-                        const success = await unarchiveNote(noteId);
-                        if (success) {
-                            alert('Note unarchived successfully!');
-                            window.appSwitchView('home');
-                        } else {
-                            alert('Failed to unarchive note.');
-                        }
-                    }
+                    iziToast.question({
+                        timeout: false,
+                        close: false,
+                        overlay: true,
+                        displayMode: 'once',
+                        id: 'question',
+                        zindex: 999,
+                        title: 'Unarchive Note',
+                        message: 'Unarchive this note?',
+                        position: 'center',
+                        buttons: [
+                            ['<button><b>Yes</b></button>', async (instance, toast) => {
+                                instance.hide({ transitionOut: 'fadeOut' }, toast, 'button');
+                                const success = await unarchiveNote(noteId);
+                                if (success) {
+                                    iziToast.success({
+                                        title: 'Success',
+                                        message: 'Note unarchived successfully!',
+                                        position: 'topRight'
+                                    });
+                                    window.appSwitchView('home');
+                                } else {
+                                    iziToast.error({
+                                        title: 'Error',
+                                        message: 'Failed to unarchive note.',
+                                        position: 'topRight'
+                                    });
+                                }
+                            }, true],
+                            ['<button>No</button>', (instance, toast) => {
+                                instance.hide({ transitionOut: 'fadeOut' }, toast, 'button');
+                            }]
+                        ]
+                    });
                 }
             });
         });
@@ -109,15 +160,40 @@ class NotesView extends HTMLElement {
         deleteButtons.forEach(btn => {
             btn.addEventListener('click', async () => {
                 const noteId = this.getAttribute('note-id');
-                if (confirm('Are you sure you want to delete this note? This action cannot be undone.')) {
-                    const success = await deleteNote(noteId);
-                    if (success) {
-                        alert('Note deleted successfully!');
-                        window.appSwitchView('home');
-                    } else {
-                        alert('Failed to delete note.');
-                    }
-                }
+                iziToast.question({
+                    timeout: false,
+                    close: false,
+                    overlay: true,
+                    displayMode: 'once',
+                    id: 'question',
+                    zindex: 999,
+                    title: 'Delete Note',
+                    message: 'Are you sure? This action cannot be undone.',
+                    position: 'center',
+                    buttons: [
+                        ['<button><b>Delete</b></button>', async (instance, toast) => {
+                            instance.hide({ transitionOut: 'fadeOut' }, toast, 'button');
+                            const success = await deleteNote(noteId);
+                            if (success) {
+                                iziToast.success({
+                                    title: 'Success',
+                                    message: 'Note deleted successfully!',
+                                    position: 'topRight'
+                                });
+                                window.appSwitchView('home');
+                            } else {
+                                iziToast.error({
+                                    title: 'Error',
+                                    message: 'Failed to delete note.',
+                                    position: 'topRight'
+                                });
+                            }
+                        }, true],
+                        ['<button>Cancel</button>', (instance, toast) => {
+                            instance.hide({ transitionOut: 'fadeOut' }, toast, 'button');
+                        }]
+                    ]
+                });
             });
         });
     }

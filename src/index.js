@@ -1,8 +1,20 @@
 import { createIcons, icons } from 'lucide';
 import { NProgress } from 'nprogress-v2';
 import 'nprogress-v2/dist/index.css';
+import iziToast from 'izitoast';
+import 'izitoast/dist/css/iziToast.min.css';
 
 import './app-core.js';
+
+window.iziToast = iziToast;
+
+iziToast.settings({
+    timeout: 3000,
+    resetOnHover: true,
+    transitionIn: 'fadeInDown',
+    transitionOut: 'fadeOutUp',
+    position: 'topRight'
+});
 
 import './style/style.css';
 

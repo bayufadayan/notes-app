@@ -1,4 +1,5 @@
 import { createIcons, icons } from 'lucide';
+import iziToast from 'izitoast';
 import { archiveNote, unarchiveNote, deleteNote, getNoteById } from '../utils/notes-manager.js';
 
 class NoteItemCard extends HTMLElement {
@@ -75,23 +76,73 @@ class NoteItemCard extends HTMLElement {
             if (!note) return;
 
             if (note.archived) {
-                if (confirm('Unarchive this note?')) {
-                    const success = await unarchiveNote(noteId);
-                    if (success) {
-                        alert('Note unarchived successfully!');
-                    } else {
-                        alert('Failed to unarchive note.');
-                    }
-                }
+                iziToast.question({
+                    timeout: false,
+                    close: false,
+                    overlay: true,
+                    displayMode: 'once',
+                    id: 'question',
+                    zindex: 999,
+                    title: 'Unarchive Note',
+                    message: 'Unarchive this note?',
+                    position: 'center',
+                    buttons: [
+                        ['<button><b>Yes</b></button>', async (instance, toast) => {
+                            instance.hide({ transitionOut: 'fadeOut' }, toast, 'button');
+                            const success = await unarchiveNote(noteId);
+                            if (success) {
+                                iziToast.success({
+                                    title: 'Success',
+                                    message: 'Note unarchived successfully!',
+                                    position: 'topRight'
+                                });
+                            } else {
+                                iziToast.error({
+                                    title: 'Error',
+                                    message: 'Failed to unarchive note.',
+                                    position: 'topRight'
+                                });
+                            }
+                        }, true],
+                        ['<button>No</button>', (instance, toast) => {
+                            instance.hide({ transitionOut: 'fadeOut' }, toast, 'button');
+                        }]
+                    ]
+                });
             } else {
-                if (confirm('Archive this note?')) {
-                    const success = await archiveNote(noteId);
-                    if (success) {
-                        alert('Note archived successfully!');
-                    } else {
-                        alert('Failed to archive note.');
-                    }
-                }
+                iziToast.question({
+                    timeout: false,
+                    close: false,
+                    overlay: true,
+                    displayMode: 'once',
+                    id: 'question',
+                    zindex: 999,
+                    title: 'Archive Note',
+                    message: 'Archive this note?',
+                    position: 'center',
+                    buttons: [
+                        ['<button><b>Yes</b></button>', async (instance, toast) => {
+                            instance.hide({ transitionOut: 'fadeOut' }, toast, 'button');
+                            const success = await archiveNote(noteId);
+                            if (success) {
+                                iziToast.success({
+                                    title: 'Success',
+                                    message: 'Note archived successfully!',
+                                    position: 'topRight'
+                                });
+                            } else {
+                                iziToast.error({
+                                    title: 'Error',
+                                    message: 'Failed to archive note.',
+                                    position: 'topRight'
+                                });
+                            }
+                        }, true],
+                        ['<button>No</button>', (instance, toast) => {
+                            instance.hide({ transitionOut: 'fadeOut' }, toast, 'button');
+                        }]
+                    ]
+                });
             }
             
             dropdown.style.display = 'none';
@@ -100,14 +151,39 @@ class NoteItemCard extends HTMLElement {
         deleteBtn?.addEventListener('click', async (e) => {
             e.stopPropagation();
             
-            if (confirm('Are you sure you want to delete this note? This action cannot be undone.')) {
-                const success = await deleteNote(noteId);
-                if (success) {
-                    alert('Note deleted successfully!');
-                } else {
-                    alert('Failed to delete note.');
-                }
-            }
+            iziToast.question({
+                timeout: false,
+                close: false,
+                overlay: true,
+                displayMode: 'once',
+                id: 'question',
+                zindex: 999,
+                title: 'Delete Note',
+                message: 'Are you sure? This action cannot be undone.',
+                position: 'center',
+                buttons: [
+                    ['<button><b>Delete</b></button>', async (instance, toast) => {
+                        instance.hide({ transitionOut: 'fadeOut' }, toast, 'button');
+                        const success = await deleteNote(noteId);
+                        if (success) {
+                            iziToast.success({
+                                title: 'Success',
+                                message: 'Note deleted successfully!',
+                                position: 'topRight'
+                            });
+                        } else {
+                            iziToast.error({
+                                title: 'Error',
+                                message: 'Failed to delete note.',
+                                position: 'topRight'
+                            });
+                        }
+                    }, true],
+                    ['<button>Cancel</button>', (instance, toast) => {
+                        instance.hide({ transitionOut: 'fadeOut' }, toast, 'button');
+                    }]
+                ]
+            });
             
             dropdown.style.display = 'none';
         });

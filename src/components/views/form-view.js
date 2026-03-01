@@ -1,5 +1,6 @@
 import { createIcons, icons } from 'lucide';
 import { NProgress } from 'nprogress-v2';
+import iziToast from 'izitoast';
 import { addNote } from '../../utils/notes-manager.js';
 
 class FormView extends HTMLElement {
@@ -33,6 +34,10 @@ class FormView extends HTMLElement {
                     id="note-title"
                     name="title"
                     placeholder="Your Note Title"
+                    autocomplete="off"
+                    maxlength="50"
+                    minlength="1"
+                    autofocus
                     required
                 />
                 <small class="content-word-count">0/50</small>
@@ -58,6 +63,8 @@ class FormView extends HTMLElement {
         const contentInput = this.querySelector('#note-content');
         const wordCount = this.querySelector('.content-word-count');
 
+        setTimeout(() => titleInput.focus(), 0);
+
         titleInput.addEventListener('input', () => {
             const length = titleInput.value.length;
             wordCount.textContent = `${length}/50`;
@@ -77,12 +84,20 @@ class FormView extends HTMLElement {
 
     async handleSubmit(title, content) {
         if (title.length > 50) {
-            alert('Title max 50 characters!');
+            iziToast.warning({
+                title: 'Validation Error',
+                message: 'Title max 50 characters!',
+                position: 'topRight'
+            });
             return;
         }
 
         if (!title.trim() || !content.trim()) {
-            alert('Title and content cannot be empty!');
+            iziToast.warning({
+                title: 'Validation Error',
+                message: 'Title and content cannot be empty!',
+                position: 'topRight'
+            });
             return;
         }
 
@@ -96,10 +111,20 @@ class FormView extends HTMLElement {
                 this.querySelector('#note-content').value = '';
                 this.querySelector('.content-word-count').textContent = '0/50';
                 
+                iziToast.success({
+                    title: 'Success',
+                    message: 'Note saved successfully!',
+                    position: 'topRight'
+                });
+                
                 window.appSwitchView('note', newNote.id);
             }
         } catch (error) {
-            alert('Failed to save note. Please try again.');
+            iziToast.error({
+                title: 'Error',
+                message: 'Failed to save note. Please try again.',
+                position: 'topRight'
+            });
             console.error('Save error:', error);
         } finally {
             NProgress.done();
